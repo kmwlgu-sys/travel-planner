@@ -1,0 +1,251 @@
+:root {
+  --primary: #FFB6C1;
+  /* 파스텔 코랄/핑크 */
+  --secondary: #A1C4FD;
+  /* 파스텔 블루/민트 */
+  --bg-main: #FFF9F5;
+  /* 따뜻한 크림/오프화이트 배경 */
+  --card-bg: rgba(255, 255, 255, 0.85);
+  /* 밝은 반투명 카드 */
+  --glass-border: rgba(255, 182, 193, 0.3);
+  /* 연핑크 보더 */
+  --text-main: #5C4B51;
+  /* 부드러운 다크 브라운 텍스트 */
+  --text-muted: #9E8C93;
+  --accent: #FF9A9E;
+  --gradient: linear-gradient(135deg, #FFB6C1 0%, #A1C4FD 100%);
+
+  /* 마스코트 컬러 */
+  --mumu-color: #FF85A1;
+  /* 핑크 */
+  --chouchou-color: #7EC8E3;
+  /* 블루 */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  background: var(--bg-main);
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(255, 182, 193, 0.2) 0%, transparent 20%),
+    radial-gradient(circle at 90% 80%, rgba(161, 196, 253, 0.2) 0%, transparent 20%);
+  color: var(--text-main);
+  min-height: 100vh;
+}
+
+.app-container {
+  display: grid;
+  grid-template-columns: 500px 1fr;
+  /* 사이드바 넓이를 늘림 (캘린더 2달치가 들어갈 충분한 공간) */
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Glassmorphism Classes (Cute Style) */
+.glass-panel {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 2px solid #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(255, 182, 193, 0.15);
+  /* 부드러운 핑크 그림자 */
+}
+
+/* Sidebar Styling */
+.sidebar {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  border-right: 1px solid var(--glass-border);
+  overflow-y: visible;
+  /* 팝업 달력이 온전히 보이도록 (세로 스크롤은 다른 방식으로 조절) */
+  overflow-x: visible;
+  position: relative;
+  /* 자식 요소 레이어 기준점 */
+  z-index: 100;
+  /* 지도 영역보다 확실히 높게 설정 */
+}
+
+/* 캘린더 & 일정 컨테이너 하위의 내용물들만 스크롤 되도록 유도 */
+.itinerary-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 8px;
+  /* 스크롤바 영역 확보 */
+}
+
+.calendar-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Map area */
+.map-container {
+  position: relative;
+  z-index: 1;
+}
+
+/* Button & UI elements */
+.btn-primary {
+  background: var(--gradient);
+  border: 2px solid #ffffff;
+  border-radius: 20px;
+  padding: 12px 24px;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 182, 193, 0.3);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* 통통 튀는 애니메이션 */
+}
+
+.btn-primary:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 6px 16px rgba(255, 182, 193, 0.4);
+}
+
+.itinerary-item {
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  background: #ffffff;
+  border: 1px solid rgba(255, 182, 193, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.itinerary-item:hover {
+  transform: translateX(4px);
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(255, 182, 193, 0.1);
+}
+
+.day-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.day-tab {
+  padding: 8px 20px;
+  border-radius: 24px;
+  background: #ffffff;
+  border: 2px solid transparent;
+  color: var(--text-muted);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+
+.day-tab:hover {
+  transform: translateY(-2px);
+  color: var(--primary);
+}
+
+.day-tab.active {
+  background: var(--gradient);
+  color: #ffffff;
+  border-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(255, 182, 193, 0.3);
+}
+
+/* React Date Range Light/Cute Theme Overrides */
+.rdrCalendarWrapper {
+  background: #ffffff !important;
+  color: var(--text-main) !important;
+  border-radius: 20px !important;
+  padding: 12px 16px !important;
+  /* 화살표 짤림 방지용 넉넉한 여백 */
+  box-sizing: border-box !important;
+  width: auto !important;
+  /* 컨테이너 폭에 맞추어 유동적으로 확장 */
+  min-width: 480px;
+  /* 2달치 달력이 들어갈 최소 폭 제한 */
+}
+
+.rdrMonth {
+  padding: 0 8px 16px 8px !important;
+  /* 내부 달력 좌우 여백 확보 */
+}
+
+.rdrMonthAndYearPickers select {
+  color: var(--text-main) !important;
+  font-weight: 600 !important;
+}
+
+.rdrDayNumber span {
+  color: var(--text-main) !important;
+  font-weight: 500;
+}
+
+.rdrDayPassive .rdrDayNumber span {
+  color: var(--text-muted) !important;
+  opacity: 0.4;
+}
+
+.rdrDayToday .rdrDayNumber span:after {
+  background: var(--primary) !important;
+  bottom: 2px !important;
+}
+
+.rdrMonthName {
+  color: var(--text-main) !important;
+}
+
+.rdrWeekDay {
+  color: var(--text-muted) !important;
+}
+
+.rdrDayHovered {
+  border-color: var(--secondary) !important;
+  border-radius: 12px !important;
+}
+
+/* 선택된 날짜 기간(Range) 오버레이 색상 강제 지정 */
+.rdrInRange,
+.rdrStartEdge,
+.rdrEndEdge {
+  color: rgba(255, 182, 193, 0.25) !important;
+  /* 연한 코랄 핑크 바탕 */
+}
+
+.rdrStartEdge {
+  border-top-left-radius: 1.048em !important;
+  border-bottom-left-radius: 1.048em !important;
+  left: 0 !important;
+}
+
+.rdrEndEdge {
+  border-top-right-radius: 1.048em !important;
+  border-bottom-right-radius: 1.048em !important;
+  right: 0 !important;
+}
+
+/* Marker Label Outline - 지도의 복잡한 배경에서도 번호가 잘 보이도록 흰색 외곽선 추가 */
+.marker-label {
+  text-shadow:
+    -2px -2px 0 #fff,
+    2px -2px 0 #fff,
+    -2px 2px 0 #fff,
+    2px 2px 0 #fff,
+    0px 0px 4px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  font-family: 'Inter', sans-serif;
+}
