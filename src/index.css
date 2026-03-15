@@ -249,3 +249,47 @@ body {
   pointer-events: none;
   font-family: 'Inter', sans-serif;
 }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .app-container {
+    grid-template-columns: 1fr;
+    height: auto;
+    overflow-y: auto;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--glass-border);
+    padding: 16px;
+    order: 2;
+    /* 일정을 아래로 */
+  }
+
+  .map-container {
+    height: 400px;
+    width: 100%;
+    order: 1;
+    /* 지도를 위로 */
+  }
+
+  .itinerary-section {
+    max-height: 500px;
+    overflow-y: auto;
+  }
+
+  .rdrCalendarWrapper {
+    min-width: unset !important;
+    width: 100% !important;
+  }
+
+  .rdrMonthsVertical {
+    flex-direction: column !important;
+  }
+
+  .rdrMonth {
+    width: 100% !important;
+  }
+}
