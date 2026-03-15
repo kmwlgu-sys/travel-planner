@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar as CalendarIcon, MapPin, Plus, Trash2, GripVertical, Check, Save, Utensils, Coffee, BedDouble, ShoppingBag, Landmark, Map } from 'lucide-react';
+import { Calendar as CalendarIcon, MapPin, Plus, Trash2, GripVertical, Check, Save, Utensils, Coffee, BedDouble, ShoppingBag, Landmark, Map, Share2 } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { format, differenceInDays, addDays } from 'date-fns';
 import { useJsApiLoader } from '@react-google-maps/api';
+import LZString from 'lz-string';
 import MapContainer from './components/MapContainer';
 import PlaceSearch from './components/PlaceSearch';
 import DateRangePicker from './components/DateRangePicker';
@@ -125,6 +126,47 @@ function App() {
     }, 2000);
   };
 
+  // 일정 공유 기능
+  const [shareStatus, setShareStatus] = useState(false);
+  const handleShare = () => {
+    const data = {
+      itinerary,
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString()
+    };
+    const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(data));
+    const url = `${window.location.origin}${window.location.pathname}?plan=${compressed}`;
+
+    navigator.clipboard.writeText(url).then(() => {
+      setShareStatus(true);
+      setTimeout(() => setShareStatus(false), 2000);
+    });
+  };
+
+  // 공유된 일정 불러오기
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const sharedData = params.get('plan');
+
+    if (sharedData) {
+      try {
+        const decompressed = LZString.decompressFromEncodedURIComponent(sharedData);
+        if (decompressed) {
+          const parsed = JSON.parse(decompressed);
+          if (window.confirm("공유된 일정을 불러오시겠습니까? (기존 로컬 데이터는 보존되지만 현재 화면에는 공유된 데이터가 표시됩니다)")) {
+            setItinerary(parsed.itinerary);
+            setStartDate(new Date(parsed.startDate));
+            setEndDate(new Date(parsed.endDate));
+            // URL 파라미터 제거 (깔끔하게)
+            window.history.replaceState({}, document.title, window.location.pathname);
+          }
+        }
+      } catch (e) {
+        console.error("Failed to parse shared plan", e);
+      }
+    }
+  }, []);
+
   // 장소 타입별 설정을 중앙 관리 (색상, 아이콘)
   const placeTypeConfig = {
     restaurant: { color: '#FF5E62', icon: <Utensils size={14} color="#FF5E62" /> },
@@ -185,34 +227,56 @@ function App() {
         </div>
 
         <section className="itinerary-section">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h3>{activeDate} 일정</h3>
-            <button
-              onClick={handleSaveDay}
-              style={{
-                background: savedStatus[activeDate] ? 'var(--secondary)' : '#ffffff',
-                border: '1px solid rgba(255, 182, 193, 0.3)',
-                color: savedStatus[activeDate] ? '#fff' : 'var(--text-main)',
-                padding: '8px 16px',
-                borderRadius: '16px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                cursor: 'pointer',
-                fontWeight: 600,
-                boxShadow: '0 2px 8px rgba(255, 182, 193, 0.1)',
-                transition: 'all 0.3s ease'
-              }}
-            >
-              {savedStatus[activeDate] ? <><Check size={14} /> 저장됨</> : <><Save size={14} /> 저장</>}
-            </button>
-          </div>
-
           <PlaceSearch
             onSelectPlace={handleSelectSearchPlace}
             isLoaded={isLoaded}
             clearTrigger={searchClearTrigger}
           />
+
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+            <button
+              onClick={handleShare}
+              style={{
+                background: shareStatus ? 'var(--mumu-color)' : '#ffffff',
+                border: '1px solid rgba(255, 182, 193, 0.3)',
+                color: shareStatus ? '#fff' : 'var(--text-main)',
+                padding: '10px 20px',
+                borderRadius: '20px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                cursor: 'pointer',
+                fontWeight: 700,
+                flex: 1,
+                boxShadow: '0 4px 12px rgba(255, 182, 193, 0.15)',
+                transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
+              }}
+            >
+              <Share2 size={18} /> {shareStatus ? '링크 복사됨!' : '일정 공유하기'}
+            </button>
+            <button
+              onClick={handleSaveDay}
+              style={{
+                background: savedStatus[activeDate] ? 'var(--secondary)' : '#ffffff',
+                border: '1px solid rgba(161, 196, 253, 0.3)',
+                color: savedStatus[activeDate] ? '#fff' : 'var(--text-main)',
+                padding: '10px 20px',
+                borderRadius: '20px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                cursor: 'pointer',
+                fontWeight: 700,
+                flex: 1,
+                boxShadow: '0 4px 12px rgba(161, 196, 253, 0.15)',
+                transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
+              }}
+            >
+              {savedStatus[activeDate] ? <><Check size={18} /> 저장됨</> : <><Save size={18} /> 로컬 저장</>}
+            </button>
+          </div>
 
           {selectedSearchPlace && (
             <div className="glass-panel" style={{ padding: '20px', marginBottom: '16px', background: '#ffffff', border: '2px solid var(--accent)' }}>
