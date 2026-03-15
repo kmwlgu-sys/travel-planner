@@ -253,19 +253,19 @@ body {
 /* Responsive Design */
 @media (max-width: 768px) {
   .app-container {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     height: auto;
     overflow-y: auto;
   }
 
   .sidebar {
     width: 100%;
-    height: auto;
-    border-right: none;
-    border-bottom: 1px solid var(--glass-border);
-    padding: 16px;
     order: 2;
     /* 일정을 아래로 */
+    padding: 16px;
+    border-right: none;
+    border-bottom: 1px solid var(--glass-border);
   }
 
   .map-container {

@@ -103,6 +103,7 @@ function DateRangePicker({ startDate, endDate, onChange }) {
                     maxWidth: '100vw'
                 }}>
                     <DateRange
+                        key={isMobile ? 'mobile' : 'desktop'}
                         locale={ko}
                         ranges={[selectionRange]}
                         onChange={handleSelect}
